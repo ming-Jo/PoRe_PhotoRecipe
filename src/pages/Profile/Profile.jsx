@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { tokenInstance } from '../../api/axios';
 import { Wrapper, BackDrop } from './profileStyle';
 import HeaderProfile from '../../components/header/HeaderProfile';
 import ProfileInfo from '../../components/profile/ProfileInfo';
@@ -21,7 +21,6 @@ const Profile = () => {
   const [info, setInfo] = useState('');
   const [modal, setModal] = useState(false);
   const [view, setView] = useState(false);
-  const URL = 'https://mandarin.api.weniv.co.kr';
   const parent = useRef();
 
   const dispatch = useDispatch();
@@ -44,13 +43,8 @@ const Profile = () => {
   useEffect(() => {
     (async function getMyInfo() {
       try {
-        const authToken = localStorage.getItem('token');
-        const res = await axios.get(`${URL}/user/myinfo`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        setInfo(res.data.user);
+        const res = await tokenInstance.get(`user/myinfo`);
+        setInfo(res.user);
       } catch (error) {
         console.log(error.res);
       }

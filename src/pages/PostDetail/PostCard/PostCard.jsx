@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { tokenInstance } from '../../../api/axios';
 import Post from '../../../components/card/Post';
 import { CardWrap } from './postCardStyle';
 import HeaderB from '../../../components/header/HeaderB';
@@ -10,20 +10,13 @@ import { Wrap } from '../../../components/card/postStyle';
 const PostCard = () => {
   const location = useLocation();
   const postDetailId = { ...location.state };
+  console.log(postDetailId);
   const [posts, setPosts] = useState('');
 
   const getPostDetail = async () => {
-    const URL = 'https://mandarin.api.weniv.co.kr';
-    const authToken = localStorage.getItem('token');
-
     try {
-      const res = await axios.get(`${URL}/post/${postDetailId.id}`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-type': 'application/json',
-        },
-      });
-      setPosts(res?.data.post);
+      const res = await tokenInstance.get(`post/${postDetailId.id}`);
+      setPosts(res?.post);
     } catch (error) {
       console.log(error.res);
     }

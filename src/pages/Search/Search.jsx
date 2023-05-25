@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useState } from 'react';
+import { tokenInstance } from '../../api/axios';
 import HeaderBSU from '../../components/header/HeaderBSU';
 import { Wrap, SearchCont, SearchMsg } from './searchStyle';
 import SearchUser from './SearchUser';
@@ -11,24 +11,15 @@ const Search = () => {
   const [keyword, setKeyword] = useState('');
 
   // 검색 API
-  const URL = 'https://mandarin.api.weniv.co.kr';
-
   const searchUser = async (search) => {
     try {
       // const regex = new RegExp(search, 'gi');
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${URL}/user/searchuser/?keyword=${search}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-type': 'application/json',
-          },
-        },
+      const response = await tokenInstance.get(
+        `user/searchuser/?keyword=${search}`,
       );
 
       if (response) {
-        setUser(response.data);
+        setUser(response);
       }
     } catch (error) {
       console.log(error.response);

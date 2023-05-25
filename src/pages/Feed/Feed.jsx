@@ -1,6 +1,6 @@
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect, useCallback, useRef, useContext } from 'react';
-import axios from 'axios';
+import { tokenInstance } from '../../api/axios';
 import HeaderFeed from '../../components/header/HeaderFeed';
 import PostWrapper from '../../components/card/PostWrapper';
 import NavBar from '../../components/navBar/NavBar';
@@ -22,19 +22,12 @@ const Feed = () => {
   const { isDarkMode, toggleMode } = useContext(ThemeContext);
 
   const getFeed = useCallback(async () => {
-    const URL = 'https://mandarin.api.weniv.co.kr';
-    const authToken = localStorage.getItem('token');
     setLoading(true);
     try {
-      const res = await axios.get(`${URL}/post/feed?limit=10&skip=${numFeed}`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-type': 'application/json',
-        },
-      });
-      setPosts(posts.concat(res.data.posts));
+      const res = await tokenInstance.get(`post/feed?limit=10&skip=${numFeed}`);
+      setPosts(posts.concat(res.posts));
       setLoading(false);
-      if (res.data.posts.length < 10) {
+      if (res.posts.length < 10) {
         setDone(true);
       }
     } catch (error) {

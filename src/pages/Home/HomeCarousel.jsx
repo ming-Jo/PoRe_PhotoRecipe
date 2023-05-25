@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { tokenInstance } from '../../api/axios';
 import {
   Carousel,
   Title,
@@ -20,26 +20,16 @@ const HomeCarousel = () => {
   const [thumbnail, setThumbnail] = useState([]);
   const navigate = useNavigate();
 
-  // API 서버
-  const URL = 'https://mandarin.api.weniv.co.kr';
-
   // 썸네일 리스트 API
   useEffect(() => {
     const getThumbnail = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(
-          `${URL}/product/PoRe_PhotoRecipe/?limit=5`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-type': 'application/json',
-            },
-          },
+        const response = await tokenInstance.get(
+          `product/PoRe_PhotoRecipe/?limit=5`,
         );
 
         if (response) {
-          setThumbnail(response.data.product);
+          setThumbnail(response.product);
         }
       } catch (error) {
         console.log(error.response);

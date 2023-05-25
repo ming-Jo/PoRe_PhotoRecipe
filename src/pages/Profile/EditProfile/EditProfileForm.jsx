@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { tokenInstance, imgInstance, BASE_URL } from '../../../api/axios';
 import { FormStyle, InvalidSpan } from '../../Login/formStyle';
 import StyledButton from '../../../components/button/BtnForm';
 import { EditProfileContDiv } from './editProfileStyle';
@@ -12,9 +12,6 @@ import {
 } from '../../Login/SetProfile/setProfileStyle';
 
 const EditProfileForm = () => {
-  //
-  const URL = 'https://mandarin.api.weniv.co.kr';
-  const authToken = localStorage.getItem('token');
   const [username, setUsername] = useState('');
   const [accountname, setAccountname] = useState('');
   const [intro, setIntro] = useState('');
@@ -27,13 +24,11 @@ const EditProfileForm = () => {
   // 프로필 정보 불러오기
   const getProfile = async () => {
     try {
-      const res = await axios.get(`${URL}/user/myinfo`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setUsername(res.data.user.username);
-      setAccountname(res.data.user.accountname);
-      setIntro(res.data.user.intro);
-      setImage(res.data.user.image);
+      const res = await tokenInstance.get(`user/myinfo`);
+      setUsername(res.user.username);
+      setAccountname(res.user.accountname);
+      setIntro(res.user.intro);
+      setImage(res.user.image);
     } catch (error) {
       console.log(error.res);
     }
@@ -50,10 +45,10 @@ const EditProfileForm = () => {
 
       formData.append('image', file);
 
-      const res = await axios.post(`${URL}/image/uploadfile`, formData);
+      const res = await imgInstance.post(`image/uploadfile`, formData);
       const fileName = res.data.filename;
 
-      setImage(`${URL}/${fileName}`);
+      setImage(`${BASE_URL}/${fileName}`);
     } catch (error) {
       console.log(error.res);
     }
@@ -87,12 +82,7 @@ const EditProfileForm = () => {
   };
   const editProfile = async () => {
     try {
-      const res = await axios.put(`${URL}/user`, JSON.stringify(body), {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-type': 'application/json',
-        },
-      });
+      const res = await tokenInstance.put(`user`, JSON.stringify(body));
       if (res) {
         navigate('/profile');
       }

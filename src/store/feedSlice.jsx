@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { tokenInstance } from '../api/axios';
 
 const initialFeedState = {
   feedData: [],
@@ -8,15 +8,8 @@ const initialFeedState = {
 };
 
 export const getFeed = createAsyncThunk('feed/getFeed', async (accountname) => {
-  const URL = 'https://mandarin.api.weniv.co.kr';
-  const authToken = localStorage.getItem('token');
-  const res = await axios.get(`${URL}/post/${accountname}/userpost`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      'Content-type': 'application/json',
-    },
-  });
-  return res.data;
+  const res = await tokenInstance.get(`post/${accountname}/userpost`);
+  return res;
 });
 
 const feedSlice = createSlice({

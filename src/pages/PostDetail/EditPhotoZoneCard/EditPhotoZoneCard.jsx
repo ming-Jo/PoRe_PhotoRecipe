@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { tokenInstance, imgInstance, BASE_URL } from '../../../api/axios';
 import BtnUpload from '../../../components/button/BtnUpload';
 import { Input, Form, TextInput } from '../../../components/input/Input';
 import HeaderB from '../../../components/header/HeaderB';
@@ -27,11 +27,9 @@ const UploadPhotoZone = () => {
     textRef.current.style.height = '1px';
     textRef.current.style.height = `${textRef.current.scrollHeight}px`;
   }, []);
-  const URL = 'https://mandarin.api.weniv.co.kr';
 
   const uploadPhoto = async () => {
     try {
-      const authToken = localStorage.getItem('token');
       const body = {
         product: {
           itemName: address,
@@ -40,15 +38,9 @@ const UploadPhotoZone = () => {
           itemImage: imgFile,
         },
       };
-      const res = await axios.put(
-        `${URL}/product/${props.id}`,
+      const res = await tokenInstance.put(
+        `product/${props.id}`,
         JSON.stringify(body),
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-type': 'application/json',
-          },
-        },
       );
       if (res) {
         navigate(`/profile`);
@@ -63,9 +55,9 @@ const UploadPhotoZone = () => {
       const file = imgRef.current.files[0];
       const formData = new FormData();
       formData.append('image', file);
-      const res = await axios.post(`${URL}/image/uploadfile`, formData);
+      const res = await imgInstance.post(`image/uploadfile`, formData);
       const fileName = res.data.filename;
-      setImgFile(`${URL}/${fileName}`);
+      setImgFile(`${BASE_URL}/${fileName}`);
     } catch (error) {
       console.log(error.res);
     }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { instance, imgInstance, BASE_URL } from '../../../api/axios';
 import { FormStyle, InvalidSpan } from '../formStyle';
 import {
   ProfileContDiv,
@@ -17,9 +17,6 @@ const SetProfileForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { email, password } = { ...location.state };
-
-  // API 서버
-  const URL = 'https://mandarin.api.weniv.co.kr';
 
   // 사용자 이미지, 사용자 이름, 계정ID
   const [profileImg, setProfileImg] = useState(profileBasicImg);
@@ -39,7 +36,7 @@ const SetProfileForm = () => {
   // 회원가입 API
   const handleSingUp = async () => {
     try {
-      const response = await axios.post(`${URL}/user`, {
+      const response = await instance.post(`user`, {
         user: {
           username: `${userName}`,
           email: `${email}`,
@@ -47,9 +44,6 @@ const SetProfileForm = () => {
           accountname: `${userId}`,
           intro: `${userIntro}`,
           image: `${profileImg}`,
-        },
-        headers: {
-          'Content-type': 'application/json',
         },
       });
 
@@ -81,12 +75,9 @@ const SetProfileForm = () => {
   // 계정ID 유효성 검사
   const validUserId = async () => {
     try {
-      const response = await axios.post(`${URL}/user/accountnamevalid`, {
+      const response = await instance.post(`user/accountnamevalid`, {
         user: {
           accountname: `${userId}`,
-        },
-        headers: {
-          'Content-type': 'application/json',
         },
       });
 
@@ -130,10 +121,9 @@ const SetProfileForm = () => {
 
       formData.append('image', file);
 
-      const res = await axios.post(`${URL}/image/uploadfile`, formData);
+      const res = await imgInstance.post(`image/uploadfile`, formData);
       const fileName = res.data.filename;
-
-      setProfileImg(`${URL}/${fileName}`);
+      setProfileImg(`${BASE_URL}/${fileName}`);
     } catch (error) {
       console.log(error.res);
     }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { FormStyle, InvalidSpan } from '../formStyle';
 import SignUpContDiv from './signUpStyle';
 import StyledButton from '../../../components/button/BtnForm';
+import { instance } from '../../../api/axios';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -25,15 +25,9 @@ const SignUpForm = () => {
 
   // 이메일 유효성 검사
   const validEmail = async () => {
-    const URL = 'https://mandarin.api.weniv.co.kr';
     try {
-      const response = await axios.post(`${URL}/user/emailvalid`, {
-        user: {
-          email: `${email}`,
-        },
-        headers: {
-          'Content-type': 'application/json',
-        },
+      const response = await instance.post('user/emailvalid', {
+        user: { email },
       });
 
       if (response && emailRegex.test(email)) {

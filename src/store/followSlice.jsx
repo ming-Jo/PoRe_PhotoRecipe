@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { tokenInstance } from '../api/axios';
 
 const initialFollowState = {
   followerData: [],
@@ -11,32 +11,16 @@ const initialFollowState = {
 export const getFollowing = createAsyncThunk(
   'following/getFollowing',
   async (value) => {
-    const URL = 'https://mandarin.api.weniv.co.kr';
-    const authToken = localStorage.getItem('token');
-    // const accountName = localStorage.getItem('accountname');
-    const res = await axios.get(`${URL}/profile/${value}/following?limit=150`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-type': 'application/json',
-      },
-    });
-    return res.data;
+    const res = await tokenInstance.get(`profile/${value}/following?limit=150`);
+    return res;
   },
 );
 
 export const getFollower = createAsyncThunk(
   'follower/getFollower',
   async (value) => {
-    const URL = 'https://mandarin.api.weniv.co.kr';
-    const authToken = localStorage.getItem('token');
-    // const accountName = localStorage.getItem('accountname');
-    const res = await axios.get(`${URL}/profile/${value}/follower?limit=150`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-type': 'application/json',
-      },
-    });
-    return res.data;
+    const res = await tokenInstance.get(`profile/${value}/follower?limit=150`);
+    return res;
   },
 );
 

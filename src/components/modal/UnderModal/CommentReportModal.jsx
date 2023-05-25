@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { tokenInstance } from '../../../api/axios';
 import ReportMiniModal from '../ConfirmModal/ReportMiniModal';
 import {
   CommentModalWrap,
@@ -15,17 +15,8 @@ const ReportUnder = ({ postDetailId, commentList, setComment, closeModal }) => {
 
   const ReportComment = async () => {
     try {
-      const URL = 'https://mandarin.api.weniv.co.kr';
-      const authToken = localStorage.getItem('token');
-      const res = await axios.post(
-        `${URL}/post/${postDetailId?.id}/comments/${commentList.id}/report`,
-        [],
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-type': 'application/json',
-          },
-        },
+      const res = await tokenInstance.post(
+        `post/${postDetailId?.id}/comments/${commentList.id}/report`,
       );
       if (res) {
         setConfirm(!confirm);

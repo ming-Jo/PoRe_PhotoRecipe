@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { tokenInstance } from '../../api/axios';
 import { Wrap, MapCont } from './mapStyle';
 import HeaderBSM from '../../components/header/HeaderBSM';
 import KakaoMap from './KakaoMap';
@@ -21,18 +21,11 @@ const Map = () => {
 
   //   mandarin API*
   const [modals, setModals] = useState([]);
-  const URL = 'https://mandarin.api.weniv.co.kr';
-  const authToken = localStorage.getItem('token');
   const accountName = 'pore_photozone';
   const getModal = async () => {
     try {
-      const res = await axios.get(`${URL}/product/${accountName}?limit=150`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-type': 'application/json',
-        },
-      });
-      setModals(res.data.product);
+      const res = await tokenInstance.get(`product/${accountName}?limit=150`);
+      setModals(res.product);
     } catch (error) {
       console.log(error.res);
     }
